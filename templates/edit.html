@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学習ログ編集</title>
+</head>
+<body>
+  <h1>学習ログ編集</h1>
+
+  <form method="POST">
+    <label for="content">今日の学習内容:</label>
+    <input type="text" id="content" name="content" value="{{ log.content }}">
+
+    <br>
+
+    <label for="time">今日の学習時間:</label>
+    <input type="text" id="time" name="time" value="{{ log.time }}">
+
+    <button type="submit">保存</button>
+  </form>
+
+  <a href="{{ url_for('home') }}">戻る</a>
+  
+</body>
+</html>

@@ -1,268 +1,61 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
-<title>英語学習記録アプリ</title>
-
-<style>
-:root{
-  --bg1:#0b1220;
-  --bg2:#0f2447;
-  --card: rgba(255,255,255,.08);
-  --stroke: rgba(255,255,255,.14);
-  --text: rgba(255,255,255,.92);
-  --muted: rgba(255,255,255,.65);
-  --accent:#7c5cff;
-  --accent2:#34d3ff;
-}
-
-body{
-  min-height:100vh;
-  color:var(--text);
-  background:
-    radial-gradient(900px 450px at 20% 10%, rgba(124,92,255,.45), transparent 60%),
-    radial-gradient(700px 420px at 85% 20%, rgba(52,211,255,.28), transparent 60%),
-    linear-gradient(160deg, var(--bg1), var(--bg2));
-}
-
-.page{
-  max-width:900px;
-  margin:auto;
-  padding:40px 20px;
-}
-
-.title{
-  font-weight:800;
-  font-size:32px;
-}
-
-.card-glass{
-  border-radius:18px;
-  background:var(--card);
-  border:1px solid var(--stroke);
-  backdrop-filter:blur(12px);
-  box-shadow:0 20px 60px rgba(0,0,0,.5);
-}
-
-.form-card{
-  padding:25px;
-  margin-top:20px;
-}
-
-.fancy-input{
-  width:100%;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.2);
-  background:rgba(0,0,0,.3);
-  color:white;
-  transition:.2s;
-}
-
-.fancy-input:focus{
-  outline:none;
-  border-color:var(--accent);
-  box-shadow:0 0 0 4px rgba(124,92,255,.3);
-  transform:translateY(-1px);
-}
-
-.btn-gradient{
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  border:none;
-  padding:12px 20px;
-  border-radius:14px;
-  font-weight:700;
-  color:#07101f;
-  transition:.2s;
-}
-
-.btn-gradient:hover{
-  transform:translateY(-2px);
-}
-
-.log-item{
-  padding:15px;
-  border-radius:16px;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.12);
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:10px;
-  transition:.2s;
-}
-
-.log-item:hover{
-  transform:translateY(-2px);
-}
-
-.highlight{
-  box-shadow:0 0 0 5px rgba(52,211,255,.3);
-}
-
-@keyframes popIn{
-  from{opacity:0; transform:translateY(15px);}
-  to{opacity:1; transform:translateY(0);}
-}
-
-.enter{
-  animation:popIn .5s ease both;
-}
-</style>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-64UC4BEhTGwk3eGpak4nO2jqtl7liTS+juXkSJ2gPAQPmlClQO7s5UgCeR6US48g" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-jdSIJTK9l6XwXj3RixpVDXtMcA2bFd9O81RlLAwhpr2oXRqvQP88rr16IeFXTgFE" crossorigin="anonymous"></script>
+    <title>英語学習記録アプリ</title>
 </head>
 
 <body>
 
-<div class="page">
+    <h1 class="mb-4">英語学習記録</h1>
 
-<h1 class="title enter">英語学習記録</h1>
+    <form method="POST">
+        <label>今日の学習内容:</label>
+        <input type="text" name="content" placeholder="例：TOEICリスニング">
 
-<div class="card-glass form-card enter">
+        <br>
 
-<form method="POST" id="logForm">
+        <label>今日の学習時間:</label>
+        <input type="text" name="time" placeholder="例：単語30分、リスニング20分">
 
-<div class="mb-3">
-<label>今日の学習内容</label>
-<input class="fancy-input" type="text" name="content" id="contentInput" placeholder="例：TOEICリスニング">
-</div>
+        <button type="submit">記録する</button>
+    </form>
 
-<div class="mb-3">
-<label>今日の学習時間</label>
-<input class="fancy-input" type="text" name="time" id="timeInput" placeholder="例：単語30分、リスニング20分">
-</div>
+    <hr>
 
-<div class="text-end">
-<button class="btn-gradient" type="submit" id="submitBtn">記録する</button>
-</div>
+    <h2 class="mt-4">ログ一覧</h2>
 
-</form>
-</div>
+    {% if logs %}
 
-<hr class="my-4">
+    <ul>
 
-<h3 class="enter">ログ一覧</h3>
+        {% for log in logs | reverse %}
 
-{% if logs %}
-  {% for log in logs | reverse %}
-    <div class="log-item enter" data-log-id="{{ log.id }}">
-      <div>
-        <strong>{{ log.content }}</strong><br>
-        <small style="color:var(--muted);">{{ log.time }}</small>
-      </div>
+        <li>
 
-      <form method="POST" action="{{ url_for('delete', log_id=log.id) }}" class="deleteForm">
-        <button class="btn btn-danger btn-sm" type="submit">削除</button>
-      </form>
-    </div>
-  {% endfor %}
-{% else %}
-  <p>まだ学習記録がありません。</p>
-{% endif %}
+            {{ log.content }} / {{ log.time }}
 
-</div>
 
-<!-- Delete Modal -->
-<div class="modal fade" id="confirmDeleteModal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content card-glass p-3">
-      <h5>削除しますか？</h5>
-      <div class="text-end mt-3">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
-        <button class="btn btn-danger" id="confirmDeleteBtn">削除する</button>
-      </div>
-    </div>
-  </div>
-</div>
+            <form action="{{ url_for('edit', log_id=log.id) }}" method="GET" style="display:inline;">
+            <button type="submit">編集</button>
+            </form>
+            <form method="POST" action="{{ url_for('delete',log_id=log.id )}}" style="display:inline;">
+                <button type="submit">削除</button>
+            </form>
 
-<!-- Toast -->
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="appToast" class="toast text-bg-dark border-0">
-    <div class="d-flex">
-      <div class="toast-body" id="toastMsg"></div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-    </div>
-  </div>
-</div>
+        </li>
 
-<script>
-const $ = (q)=>document.querySelector(q);
-const $$ = (q)=>document.querySelectorAll(q);
+        {% endfor %}
 
-const toast = new bootstrap.Toast($('#appToast'));
-const toastMsg = $('#toastMsg');
+    </ul>
 
-function showToast(msg){
-  toastMsg.textContent = msg;
-  toast.show();
-}
+    {% else %}
 
-// Draft保存
-const contentInput = $('#contentInput');
-const timeInput = $('#timeInput');
-const DRAFT_KEY="draft_study";
+    <p>まだ学習記録がありません。</p>
 
-function saveDraft(){
-  localStorage.setItem(DRAFT_KEY, JSON.stringify({
-    content:contentInput.value,
-    time:timeInput.value
-  }));
-}
-
-function loadDraft(){
-  const data=localStorage.getItem(DRAFT_KEY);
-  if(!data)return;
-  const d=JSON.parse(data);
-  contentInput.value=d.content||"";
-  timeInput.value=d.time||"";
-}
-
-loadDraft();
-contentInput.addEventListener('input',saveDraft);
-timeInput.addEventListener('input',saveDraft);
-
-// submit演出
-$('#logForm').addEventListener('submit',(e)=>{
-  if(!contentInput.value.trim()||!timeInput.value.trim()){
-    e.preventDefault();
-    showToast("入力してね");
-    return;
-  }
-  sessionStorage.setItem("justAdded","1");
-  localStorage.removeItem(DRAFT_KEY);
-});
-
-// 追加後ハイライト
-if(sessionStorage.getItem("justAdded")==="1"){
-  sessionStorage.removeItem("justAdded");
-  const first=$('.log-item');
-  if(first){
-    first.classList.add("highlight");
-    first.scrollIntoView({behavior:"smooth",block:"center"});
-    setTimeout(()=>first.classList.remove("highlight"),1500);
-    showToast("記録したよ🔥");
-  }
-}
-
-// 削除確認
-let pendingForm=null;
-const modal=new bootstrap.Modal($('#confirmDeleteModal'));
-
-$$('.deleteForm').forEach(f=>{
-  f.addEventListener('submit',(e)=>{
-    e.preventDefault();
-    pendingForm=f;
-    modal.show();
-  });
-});
-
-$('#confirmDeleteBtn').addEventListener('click',()=>{
-  if(pendingForm) pendingForm.submit();
-});
-</script>
+    {% endif %}
 
 </body>
 </html>
