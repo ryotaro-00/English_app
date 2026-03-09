@@ -9,6 +9,9 @@
   <h1>学習ログ編集</h1>
 
   <form method="POST">
+    <label for="date">学習日</label>
+    <input type="date" id="date" name="date" value="{{ log.study_date }}">
+    <br>
     <label for="content">今日の学習内容:</label>
     <input type="text" id="content" name="content" value="{{ log.content }}">
 

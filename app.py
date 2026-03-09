@@ -69,12 +69,13 @@ def edit(log_id):
     conn = get_db_connection()
 
     if request.method == "POST":
+        study_date = request.form["date"]
         content = request.form["content"]
         study_time = request.form["time"]
 
         conn.execute(
-            "UPDATE logs SET content = ?, time = ? WHERE id = ?",
-            (content, study_time, log_id)
+            "UPDATE logs SET study_date = ?, content = ?, time = ? WHERE id = ?",
+            (study_date, content, study_time, log_id)
         )
         conn.commit()
         conn.close()
