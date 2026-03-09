@@ -17,7 +17,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             content TEXT NOT NULL,
-            time TEXT NOT NULL,
+            time INTEGER NOT NULL,
             study_date TEXT NOT NULL
         )
     """)
@@ -35,14 +35,14 @@ def home():
     conn = get_db_connection()
 
     if request.method == 'POST':
-        study_time = request.form['time']
+        study_time = int(request.form['time'])
         content = request.form['content']
 
         if study_time and content:
             today = date.today().isoformat()
             conn.execute(
                 "INSERT INTO logs (content, time,study_date) VALUES (?, ?, ?)",
-                (content, study_time,today)
+                (content, int(study_time),today)
             )
             conn.commit()
 

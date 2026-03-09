@@ -18,7 +18,7 @@
         <br>
 
         <label>今日の学習時間:</label>
-        <input type="text" name="time" placeholder="例：単語30分、リスニング20分">
+        <input type="number" name="time" placeholder="例：30(分)">
 
         <button type="submit">記録する</button>
     </form>
@@ -35,7 +35,7 @@
 
         <li>
 
-            {{ log.study_date }} / {{ log.content }} / {{ log.time }}
+            {{ log.study_date }} / {{ log.content }} / {{ log.time }}分
 
 
             <form action="{{ url_for('edit', log_id=log.id) }}" method="GET" style="display:inline;">

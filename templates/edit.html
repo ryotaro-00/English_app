@@ -18,9 +18,9 @@
     <br>
 
     <label for="time">今日の学習時間:</label>
-    <input type="text" id="time" name="time" value="{{ log.time }}">
+    <input type="number" id="time" name="time" value="{{ log.time }}">
 
-    <button type="submit">保存</button>
+    <button type="submit">更新する</button>
   </form>
 
   <a href="{{ url_for('home') }}">戻る</a>
