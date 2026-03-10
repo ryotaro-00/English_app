@@ -50,9 +50,30 @@ def home():
         return redirect(url_for('home'))
 
     logs = conn.execute("SELECT * FROM logs ORDER BY study_date DESC").fetchall()
+    total_time = conn.execute(
+    "SELECT SUM(time) AS total FROM logs"
+).fetchone()["total"] or 0
+
+    weekly_total = conn.execute("""
+        SELECT SUM(time) AS total
+        FROM logs
+        WHERE study_date >= date('now', 'weekday 1', '-7 days')
+        AND study_date < date('now', 'weekday 1')
+    """).fetchone()["total"] or 0
+
+    monthly_total = conn.execute("""
+        SELECT SUM(time) AS total
+        FROM logs
+        WHERE strftime('%Y-%m', study_date) = strftime('%Y-%m', 'now')
+    """).fetchone()["total"] or 0
+
+    weekly_avg = round(weekly_total / 7, 1)
+    monthly_avg = round(monthly_total / date.today().day, 1)
+
     conn.close()
 
-    return render_template('index.html', logs=logs)
+    
+    return render_template('index.html', logs=logs,total_time=total_time, weekly_total=weekly_total, monthly_total=monthly_total, weekly_avg=weekly_avg, monthly_avg=monthly_avg)
 
 
 @app.route("/delete/<int:log_id>", methods=["POST"])
