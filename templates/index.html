@@ -12,16 +12,42 @@
     <h1 class="mb-4">英語学習記録</h1>
 
     <form method="POST">
-        <label>今日の学習内容:</label>
-        <input type="text" name="content" placeholder="例：TOEICリスニング">
+    <label>今日の学習内容:</label>
+    <select name="content" onchange="toggleInput(this.value)">
+        <option value="Speaking">Speaking</option>
+        <option value="Listening">Listening</option>
+        <option value="Writing">Writing</option>
+        <option value="Reading">Reading</option>
+        <option value="Vocabulary">Vocabulary</option>
+        <option value="other">その他</option>
+    </select>
 
-        <br>
+    <br>
 
-        <label>今日の学習時間:</label>
-        <input type="number" name="time" placeholder="例：30(分)">
+    <div id="customInput" style="display: none;">
+        <label>その他の学習内容:</label>
+        <input type="text" name="custom_content" placeholder="例：Grammar">
+    </div>
 
-        <button type="submit">記録する</button>
-    </form>
+    <br>
+
+    <label>今日の学習時間:</label>
+    <input type="number" name="time" placeholder="例：30(分)">
+
+    <button type="submit">記録する</button>
+</form>
+
+<script>
+function toggleInput(value) {
+    const input = document.getElementById("customInput");
+
+    if (value === "other") {
+        input.style.display = "block";
+    } else {
+        input.style.display = "none";
+    }
+}
+</script>
 
     <hr>
     

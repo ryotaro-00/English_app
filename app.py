@@ -27,6 +27,7 @@ def init_db():
 def add_date_column():
     conn = get_db_connection()
     conn.execute("ALTER TABLE logs ADD COLUMN study_date TEXT")
+    conn.execute("ALTER TABLE logs ADD COLUMN category TEXT")
     conn.commit()
     conn.close()
 
@@ -37,6 +38,11 @@ def home():
     if request.method == 'POST':
         study_time = int(request.form['time'])
         content = request.form['content']
+        custom_content = request.form['custom_content']
+
+        if content == "other" and custom_content:
+            content = custom_content
+
 
         if study_time and content:
             today = date.today().isoformat()
