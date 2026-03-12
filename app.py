@@ -53,6 +53,15 @@ def home():
 
     logs = conn.execute("SELECT * FROM logs ORDER BY study_date DESC").fetchall()
 
+    selected_date = request.args.get("selected_date")
+    selected_logs = []
+
+    if selected_date:
+            selected_logs = conn.execute(
+                "SELECT * FROM logs WHERE study_date = ? ORDER BY id DESC",
+                (selected_date,)
+            ).fetchall()
+
     today_obj = date.today()
     year = today_obj.year
     month = today_obj.month
@@ -103,7 +112,9 @@ def home():
     month=month,
     month_days=month_days,
     study_dates=study_dates,
-    today=today_obj.isoformat()
+    today=today_obj.isoformat(),
+    selected_date=selected_date,
+    selected_logs=selected_logs,
     )
 
 

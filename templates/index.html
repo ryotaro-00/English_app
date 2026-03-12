@@ -40,6 +40,11 @@
 .calendar-day.today {
     outline: 2px solid #0d6efd;
 }
+
+.calendar-link {
+    text-decoration: none;
+    color: inherit;
+}
 </style>
 </head>
 
@@ -66,6 +71,7 @@
     </div>
 
     <br>
+    
 
     <label>今日の学習時間:</label>
     <input type="number" name="time" placeholder="例：30(分)">
@@ -114,9 +120,11 @@ function toggleInput(value) {
                 <div class="calendar-day empty"></div>
             {% else %}
                 {% set day_str = "%04d-%02d-%02d"|format(year, month, day) %}
+                <a href="{{ url_for('home', selected_date=day_str) }}" class="calendar-link">
                 <div class="calendar-day {% if day_str in study_dates %}studied{% endif %} {% if day_str == today %}today{% endif %}">
                     {{ day }}
                 </div>
+                </a>
             {% endif %}
 
         {% endfor %}
@@ -125,6 +133,25 @@ function toggleInput(value) {
 </div>
 
 <hr>
+
+
+{% if selected_date %}
+    <h2 class="mt-4">{{ selected_date }} の学習ログ</h2>
+
+    {% if selected_logs %}
+        <ul>
+            {% for log in selected_logs %}
+                <li>
+                    {{ log.study_date }} / {{ log.content }} / {{ log.time }}分
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>この日の学習記録はありません。</p>
+    {% endif %}
+
+    <hr>
+{% endif %}
 
 
     <h2 class="mt-4">ログ一覧</h2>
