@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 from datetime import date
+import calendar
 
 app = Flask(__name__)
 
@@ -56,6 +57,22 @@ def home():
         return redirect(url_for('home'))
 
     logs = conn.execute("SELECT * FROM logs ORDER BY study_date DESC").fetchall()
+
+    today_obj = date.today()
+    year = today_obj.year
+    month = today_obj.month
+
+    cal = calendar.Calendar(firstweekday=6)
+    month_days = cal.monthdayscalendar(year, month)
+
+    study_dates = conn.execute(
+        "SELECT DISTINCT study_date FROM logs WHERE strftime('%Y-%m', study_date) = ?",
+        (f"{year}-{month:02d}",)
+    ).fetchall()
+
+    study_dates = [row["study_date"] for row in study_dates]
+
+    
     total_time = conn.execute(
     "SELECT SUM(time) AS total FROM logs"
 ).fetchone()["total"] or 0
@@ -79,7 +96,20 @@ def home():
     conn.close()
 
     
-    return render_template('index.html', logs=logs,total_time=total_time, weekly_total=weekly_total, monthly_total=monthly_total, weekly_avg=weekly_avg, monthly_avg=monthly_avg)
+    return render_template(
+    'index.html',
+    logs=logs,
+    total_time=total_time,
+    weekly_total=weekly_total,
+    monthly_total=monthly_total,
+    weekly_avg=weekly_avg,
+    monthly_avg=monthly_avg,
+    year=year,
+    month=month,
+    month_days=month_days,
+    study_dates=study_dates,
+    today=today_obj.isoformat()
+    )
 
 
 @app.route("/delete/<int:log_id>", methods=["POST"])
