@@ -25,12 +25,7 @@ def init_db():
     conn.commit()
     conn.close()
 
-def add_date_column():
-    conn = get_db_connection()
-    conn.execute("ALTER TABLE logs ADD COLUMN study_date TEXT")
-    conn.execute("ALTER TABLE logs ADD COLUMN category TEXT")
-    conn.commit()
-    conn.close()
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
