@@ -2,193 +2,1019 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英語学習記録アプリ</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-64UC4BEhTGwk3eGpak4nO2jqtl7liTS+juXkSJ2gPAQPmlClQO7s5UgCeR6US48g" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-jdSIJTK9l6XwXj3RixpVDXtMcA2bFd9O81RlLAwhpr2oXRqvQP88rr16IeFXTgFE" crossorigin="anonymous"></script>
-    <title>英語学習記録アプリ</title>
+
     <style>
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    margin-bottom: 20px;
-}
+        :root {
+            --bg-main: #090e17;
+            --bg-secondary: #0e1420;
+            --bg-panel: rgba(255, 255, 255, 0.08);
+            --bg-panel-strong: rgba(255, 255, 255, 0.11);
+            --bg-input: rgba(255, 255, 255, 0.07);
 
-.calendar-week {
-    font-weight: bold;
-    text-align: center;
-    padding: 8px 0;
-}
+            --text-main: #f6f8fc;
+            --text-sub: #d4dbeb;
+            --text-muted: #98a4bf;
 
-.calendar-day {
-    min-height: 60px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 8px;
-    background-color: #f8f9fa;
-}
+            --line-soft: rgba(255, 255, 255, 0.10);
+            --line-mid: rgba(255, 255, 255, 0.15);
+            --line-strong: rgba(255, 255, 255, 0.22);
 
-.calendar-day.empty {
-    background: transparent;
-    border: none;
-}
+            --white-glow: rgba(255, 255, 255, 0.24);
+            --blue-glow: rgba(175, 194, 255, 0.16);
+            --purple-glow: rgba(213, 190, 255, 0.12);
 
-.calendar-day.studied {
-    background-color: #cfe2ff;
-    border: 1px solid #86b7fe;
-}
+            --shadow-main: 0 20px 50px rgba(0, 0, 0, 0.28);
+            --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.18);
 
-.calendar-day.today {
-    outline: 2px solid #0d6efd;
-}
+            --radius-xl: 28px;
+            --radius-lg: 22px;
+            --radius-md: 16px;
+        }
 
-.calendar-link {
-    text-decoration: none;
-    color: inherit;
-}
-</style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text-main);
+            font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic UI", sans-serif;
+            background:
+                radial-gradient(circle at 15% 18%, rgba(255,255,255,0.08), transparent 16%),
+                radial-gradient(circle at 82% 20%, rgba(255,255,255,0.06), transparent 14%),
+                radial-gradient(circle at 70% 75%, rgba(188, 203, 255, 0.06), transparent 18%),
+                linear-gradient(180deg, #080d15 0%, #0b111a 40%, #101726 100%);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 30% 25%, rgba(255,255,255,0.12), transparent 12%),
+                radial-gradient(circle at 72% 22%, rgba(195, 176, 255, 0.08), transparent 10%),
+                radial-gradient(circle at 65% 78%, rgba(175, 194, 255, 0.08), transparent 12%);
+            filter: blur(60px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                linear-gradient(rgba(255,255,255,0.016) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.016) 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.28;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero-screen {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .hero-rings {
+            position: absolute;
+            width: 1300px;
+            height: 1300px;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle,
+                    rgba(255,255,255,0.22) 0%,
+                    rgba(255,255,255,0.14) 10%,
+                    transparent 11%,
+                    transparent 20%,
+                    rgba(255,255,255,0.10) 21%,
+                    transparent 22%,
+                    transparent 31%,
+                    rgba(255,255,255,0.08) 32%,
+                    transparent 33%,
+                    transparent 44%,
+                    rgba(255,255,255,0.07) 45%,
+                    transparent 46%,
+                    transparent 58%,
+                    rgba(255,255,255,0.05) 59%,
+                    transparent 60%,
+                    transparent 74%,
+                    rgba(255,255,255,0.04) 75%,
+                    transparent 76%
+                );
+            filter: blur(2px);
+            opacity: 0.95;
+            transform: scale(1.08);
+        }
+
+        .hero-orb {
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.22), rgba(255,255,255,0.05) 55%, transparent 75%);
+            filter: blur(24px);
+            opacity: 0.9;
+        }
+
+        .hero-orb.one {
+            top: 10%;
+            left: 14%;
+        }
+
+        .hero-orb.two {
+            right: 10%;
+            bottom: 12%;
+            background: radial-gradient(circle, rgba(190,205,255,0.20), rgba(255,255,255,0.03) 55%, transparent 75%);
+        }
+
+        .hero-fluid {
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            right: 12%;
+            top: 17%;
+            border-radius: 40% 60% 58% 42% / 45% 35% 65% 55%;
+            background:
+                radial-gradient(circle at 30% 30%, rgba(255,255,255,0.38), transparent 28%),
+                radial-gradient(circle at 65% 40%, rgba(185, 205, 255, 0.20), transparent 34%),
+                radial-gradient(circle at 52% 68%, rgba(220, 205, 255, 0.14), transparent 28%),
+                linear-gradient(145deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+            border: 1px solid rgba(255,255,255,0.10);
+            filter: blur(10px);
+            opacity: 0.82;
+            transform: rotate(-12deg);
+            animation: floatBlob 8s ease-in-out infinite;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 24px;
+            max-width: 980px;
+            animation: fadeUp 0.8s ease;
+        }
+
+        .hero-kicker {
+            margin: 0 0 18px;
+            letter-spacing: 0.32em;
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.58);
+        }
+
+        .hero-title {
+            margin: 0;
+            font-size: clamp(2.7rem, 6vw, 5.8rem);
+            line-height: 1.02;
+            font-weight: 750;
+            color: #fafcff;
+            letter-spacing: 0.01em;
+            text-shadow: 0 8px 30px rgba(255,255,255,0.08);
+        }
+
+        .hero-sub {
+            margin: 18px auto 0;
+            max-width: 620px;
+            font-size: 1rem;
+            line-height: 1.8;
+            color: rgba(255,255,255,0.68);
+        }
+
+        .hero-actions {
+            margin-top: 34px;
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .hero-btn,
+        .scroll-indicator {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(255,255,255,0.06);
+            color: var(--text-main);
+            backdrop-filter: blur(14px);
+            transition: 0.25s ease;
+        }
+
+        .hero-btn:hover,
+        .scroll-indicator:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.10);
+            color: var(--text-main);
+        }
+
+        .page-wrap {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 0 18px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-block {
+            margin-bottom: 26px;
+            scroll-margin-top: 30px;
+        }
+
+        .glass-card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+            border: 1px solid var(--line-soft);
+            box-shadow: var(--shadow-main);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+        }
+
+        .glass-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.04), transparent 42%, rgba(255,255,255,0.02));
+            pointer-events: none;
+        }
+
+        .section-title {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: 1.08rem;
+            letter-spacing: 0.08em;
+            font-weight: 700;
+        }
+
+        .section-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.18), transparent);
+        }
+
+        .top-info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+
+        .welcome-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: var(--text-sub);
+            font-size: 0.92rem;
+        }
+
+        .logout-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 11px 16px;
+            text-decoration: none;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: var(--text-main);
+            transition: 0.24s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            color: var(--text-main);
+            background: rgba(255,255,255,0.11);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.08fr 0.92fr;
+            gap: 22px;
+        }
+
+        .form-grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            letter-spacing: 0.02em;
+        }
+
+        .neo-input,
+        .neo-select {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 15px;
+            border: 1px solid var(--line-soft);
+            background: var(--bg-input);
+            color: var(--text-main);
+            outline: none;
+            transition: 0.22s ease;
+        }
+
+        .neo-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .neo-input:focus,
+        .neo-select:focus {
+            background: rgba(255,255,255,0.10);
+            border-color: var(--line-strong);
+            box-shadow: 0 0 0 4px rgba(255,255,255,0.05);
+        }
+
+        .submit-btn {
+            border: none;
+            padding: 14px 20px;
+            border-radius: 15px;
+            font-weight: 700;
+            color: #08101a;
+            background: linear-gradient(135deg, #ffffff, #e3ebff 56%, #cedbff 100%);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.14);
+            transition: 0.24s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.03);
+        }
+
+        .custom-input-wrap {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .summary-grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .summary-item {
+            position: relative;
+            overflow: hidden;
+            padding: 18px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.05));
+            border: 1px solid rgba(255,255,255,0.10);
+            transition: 0.22s ease;
+        }
+
+        .summary-item::before {
+            content: "";
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            top: -48px;
+            right: -34px;
+            background: radial-gradient(circle, rgba(255,255,255,0.22), transparent 66%);
+            filter: blur(12px);
+        }
+
+        .summary-item:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.06));
+        }
+
+        .summary-label {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 10px;
+            font-size: 0.86rem;
+            color: var(--text-sub);
+        }
+
+        .summary-value {
+            position: relative;
+            z-index: 1;
+            font-size: 1.6rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .summary-unit {
+            position: relative;
+            z-index: 1;
+            font-size: 0.84rem;
+            color: var(--text-muted);
+        }
+
+        .calendar-head {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .calendar-head h2 {
+            margin: 0;
+            font-size: 1.08rem;
+            font-weight: 700;
+        }
+
+        .calendar-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: var(--text-sub);
+            font-size: 0.9rem;
+        }
+
+        .calendar-grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+
+        .calendar-week {
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-sub);
+            padding: 10px 0;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.08);
+            letter-spacing: 0.05em;
+        }
+
+        .calendar-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .calendar-day {
+            min-height: 96px;
+            padding: 12px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.07));
+            border: 1px solid rgba(255,255,255,0.10);
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            position: relative;
+            overflow: hidden;
+            transition: 0.22s ease;
+        }
+
+        .calendar-day::before {
+            content: "";
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            right: -20px;
+            top: -20px;
+            background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 68%);
+            opacity: 0;
+            transition: 0.22s ease;
+        }
+
+        .calendar-day:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.09));
+            border-color: rgba(255,255,255,0.16);
+        }
+
+        .calendar-day:hover::before {
+            opacity: 1;
+        }
+
+        .calendar-day.empty {
+            background: transparent;
+            border: none;
+            pointer-events: none;
+            box-shadow: none;
+        }
+
+        .calendar-day.studied {
+            background: linear-gradient(180deg, rgba(232,239,255,0.18), rgba(255,255,255,0.09));
+            border-color: rgba(255,255,255,0.19);
+        }
+
+        .calendar-day.studied::after {
+            content: "";
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            top: 12px;
+            right: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.88);
+            box-shadow: 0 0 14px rgba(255,255,255,0.65);
+        }
+
+        .calendar-day.today {
+            background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.10));
+            border-color: rgba(255,255,255,0.25);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.05);
+        }
+
+        .day-number {
+            position: relative;
+            z-index: 1;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .selected-log-list,
+        .log-list {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            gap: 12px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .log-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 18px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+            border: 1px solid rgba(255,255,255,0.10);
+            transition: 0.22s ease;
+            animation: fadeUp 0.7s ease;
+        }
+
+        .log-card:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.07));
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .log-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .log-date {
+            font-size: 0.86rem;
+            color: var(--text-muted);
+        }
+
+        .log-content {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .log-time {
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            padding: 7px 12px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.10);
+        }
+
+        .log-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 10px 14px;
+            border-radius: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            background: rgba(255,255,255,0.08);
+            transition: 0.22s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.13);
+        }
+
+        .empty-message {
+            position: relative;
+            z-index: 1;
+            padding: 18px;
+            border-radius: 18px;
+            color: var(--text-sub);
+            background: rgba(255,255,255,0.06);
+            border: 1px dashed rgba(255,255,255,0.12);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes floatBlob {
+            0%, 100% {
+                transform: rotate(-12deg) translateY(0px);
+                border-radius: 40% 60% 58% 42% / 45% 35% 65% 55%;
+            }
+            50% {
+                transform: rotate(-6deg) translateY(-12px);
+                border-radius: 48% 52% 45% 55% / 54% 41% 59% 46%;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .hero-rings {
+                width: 1000px;
+                height: 1000px;
+            }
+
+            .hero-fluid {
+                width: 250px;
+                height: 250px;
+                right: 6%;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .page-wrap {
+                padding: 0 12px 40px;
+            }
+
+            .glass-card {
+                padding: 18px;
+                border-radius: 24px;
+            }
+
+            .form-grid,
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .calendar-grid {
+                gap: 6px;
+            }
+
+            .calendar-day {
+                min-height: 68px;
+                padding: 8px;
+                border-radius: 14px;
+            }
+
+            .calendar-week {
+                font-size: 0.8rem;
+                padding: 8px 0;
+            }
+
+            .log-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .log-actions,
+            .action-btn {
+                width: 100%;
+            }
+
+            .hero-rings {
+                width: 760px;
+                height: 760px;
+            }
+
+            .hero-fluid {
+                width: 180px;
+                height: 180px;
+                top: 12%;
+                right: 4%;
+                opacity: 0.6;
+            }
+
+            .hero-orb.one,
+            .hero-orb.two {
+                width: 180px;
+                height: 180px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-  <p>こんにちは、{{ session["username"] }} さん</p>
-  <a href="{{ url_for('logout') }}">ログアウト</a>
+    <section class="hero-screen">
+        <div class="hero-rings"></div>
+        <div class="hero-orb one"></div>
+        <div class="hero-orb two"></div>
+        <div class="hero-fluid"></div>
 
-    <h1 class="mb-4">英語学習記録</h1>
+        <div class="hero-content">
+            <p class="hero-kicker">ENGLISH STUDY LOG</p>
+            <h1 class="hero-title">
+                
+                Study Dashboard
+            </h1>
+            <p class="hero-sub">
+                静かに積み上げる学習記録を、少し未来的で上品な空気感に。
+                スクロールして、記録・集計・カレンダー・ログ一覧を確認できます。
+            </p>
 
-    <form method="POST">
-    <label>今日の学習内容:</label>
-    <select name="content" onchange="toggleInput(this.value)">
-        <option value="Speaking">Speaking</option>
-        <option value="Listening">Listening</option>
-        <option value="Writing">Writing</option>
-        <option value="Reading">Reading</option>
-        <option value="Vocabulary">Vocabulary</option>
-        <option value="other">その他</option>
-    </select>
+            <div class="hero-actions">
+                <a href="#main-content" class="scroll-indicator">Scroll ↓</a>
+                <a href="{{ url_for('logout') }}" class="hero-btn">ログアウト</a>
+            </div>
+        </div>
+    </section>
 
-    <br>
+    <div id="main-content" class="page-wrap">
+        <section class="section-block">
+            <div class="top-info-bar">
+                <div class="welcome-chip">● こんにちは、{{ session["username"] }} さん</div>
+            </div>
+        </section>
 
-    <div id="customInput" style="display: none;">
-        <label>その他の学習内容:</label>
-        <input type="text" name="custom_content" placeholder="例：Grammar">
+        <section class="section-block">
+            <div class="dashboard-grid">
+                <div class="glass-card">
+                    <div class="section-title">
+                        <h2>NEW LOG</h2>
+                        <div class="section-line"></div>
+                    </div>
+
+                    <form method="POST">
+                        <div class="form-grid">
+                            <div class="form-group full">
+                                <label>学習内容</label>
+                                <select name="content" class="neo-select" onchange="toggleInput(this.value)">
+                                    <option value="Speaking">Speaking</option>
+                                    <option value="Listening">Listening</option>
+                                    <option value="Writing">Writing</option>
+                                    <option value="Reading">Reading</option>
+                                    <option value="Vocabulary">Vocabulary</option>
+                                    <option value="other">その他</option>
+                                </select>
+                            </div>
+
+                            <div id="customInput" class="form-group full custom-input-wrap">
+                                <label>その他の学習内容</label>
+                                <input type="text" name="custom_content" class="neo-input" placeholder="例：Grammar / Shadowing">
+                            </div>
+
+                            <div class="form-group">
+                                <label>学習日</label>
+                                <input type="date" name="study_date" class="neo-input">
+                            </div>
+
+                            <div class="form-group">
+                                <label>学習時間（分）</label>
+                                <input type="number" name="time" class="neo-input" placeholder="例：30">
+                            </div>
+
+                            <div class="form-group full">
+                                <button type="submit" class="submit-btn">記録する</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="glass-card">
+                    <div class="section-title">
+                        <h2>STUDY SUMMARY</h2>
+                        <div class="section-line"></div>
+                    </div>
+
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="summary-label">合計学習時間</div>
+                            <div class="summary-value">{{ total_time }}</div>
+                            <div class="summary-unit">minutes</div>
+                        </div>
+
+                        <div class="summary-item">
+                            <div class="summary-label">今週の合計</div>
+                            <div class="summary-value">{{ weekly_total }}</div>
+                            <div class="summary-unit">minutes</div>
+                        </div>
+
+                        <div class="summary-item">
+                            <div class="summary-label">今月の合計</div>
+                            <div class="summary-value">{{ monthly_total }}</div>
+                            <div class="summary-unit">minutes</div>
+                        </div>
+
+                        <div class="summary-item">
+                            <div class="summary-label">今週の平均</div>
+                            <div class="summary-value">{{ weekly_avg }}</div>
+                            <div class="summary-unit">minutes</div>
+                        </div>
+
+                        <div class="summary-item">
+                            <div class="summary-label">今月の平均</div>
+                            <div class="summary-value">{{ monthly_avg }}</div>
+                            <div class="summary-unit">minutes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-block">
+            <div class="glass-card">
+                <div class="calendar-head">
+                    <h2>{{ year }}年 {{ month }}月 カレンダー</h2>
+                    <div class="calendar-badge">学習した日はハイライト表示</div>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="calendar-week">SUN</div>
+                    <div class="calendar-week">MON</div>
+                    <div class="calendar-week">TUE</div>
+                    <div class="calendar-week">WED</div>
+                    <div class="calendar-week">THU</div>
+                    <div class="calendar-week">FRI</div>
+                    <div class="calendar-week">SAT</div>
+
+                    {% for week in month_days %}
+                        {% for day in week %}
+                            {% if day == 0 %}
+                                <div class="calendar-day empty"></div>
+                            {% else %}
+                                {% set day_str = "%04d-%02d-%02d"|format(year, month, day) %}
+                                <a href="{{ url_for('home', selected_date=day_str) }}" class="calendar-link">
+                                    <div class="calendar-day {% if day_str in study_dates %}studied{% endif %} {% if day_str == today %}today{% endif %}">
+                                        <span class="day-number">{{ day }}</span>
+                                    </div>
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        {% if selected_date %}
+        <section class="section-block">
+            <div class="glass-card">
+                <div class="section-title">
+                    <h2>{{ selected_date }} の学習ログ</h2>
+                    <div class="section-line"></div>
+                </div>
+
+                {% if selected_logs %}
+                    <ul class="selected-log-list">
+                        {% for log in selected_logs %}
+                        <li class="log-card">
+                            <div class="log-left">
+                                <div class="log-date">{{ log.study_date }}</div>
+                                <div class="log-content">{{ log.content }}</div>
+                                <div class="log-time">{{ log.time }}分</div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="empty-message">この日の学習記録はありません。</div>
+                {% endif %}
+            </div>
+        </section>
+        {% endif %}
+
+        <section class="section-block">
+            <div class="glass-card">
+                <div class="section-title">
+                    <h2>ALL LOGS</h2>
+                    <div class="section-line"></div>
+                </div>
+
+                {% if logs %}
+                    <ul class="log-list">
+                        {% for log in logs %}
+                        <li class="log-card">
+                            <div class="log-left">
+                                <div class="log-date">{{ log.study_date }}</div>
+                                <div class="log-content">{{ log.content }}</div>
+                                <div class="log-time">{{ log.time }}分</div>
+                            </div>
+
+                            <div class="log-actions">
+                                <form action="{{ url_for('edit', log_id=log.id) }}" method="GET" style="display:inline;">
+                                    <button type="submit" class="action-btn">編集</button>
+                                </form>
+
+                                <form method="POST" action="{{ url_for('delete', log_id=log.id) }}" style="display:inline;">
+                                    <button type="submit" class="action-btn">削除</button>
+                                </form>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="empty-message">まだ学習記録がありません。</div>
+                {% endif %}
+            </div>
+        </section>
     </div>
 
-    <br>
-    <label>学習日:</label>
-    <input type="date" name="study_date">
-    <br>
-
-    <label>今日の学習時間:</label>
-    <input type="number" name="time" placeholder="例：30(分)">
-
-    <button type="submit">記録する</button>
-</form>
-
-<script>
-function toggleInput(value) {
-    const input = document.getElementById("customInput");
-
-    if (value === "other") {
-        input.style.display = "block";
-    } else {
-        input.style.display = "none";
-    }
-}
-</script>
-
-    <hr>
-    
-    <h2>学習サマリー</h2>
-<p>合計学習時間：{{ total_time }} 分</p>
-<p>今週の合計学習時間：{{ weekly_total }} 分</p>
-<p>今月の合計学習時間：{{ monthly_total }} 分</p>
-<p>今週の平均学習時間：{{ weekly_avg }} 分</p>
-<p>今月の平均学習時間：{{ monthly_avg }} 分</p>
-
-<hr>
-<h2 class="mt-4">{{ year }}年 {{ month }}月 カレンダー</h2>
-
-<div class="calendar-grid">
-
-    <div class="calendar-week">Sun</div>
-    <div class="calendar-week">Mon</div>
-    <div class="calendar-week">Tue</div>
-    <div class="calendar-week">Wed</div>
-    <div class="calendar-week">Thu</div>
-    <div class="calendar-week">Fri</div>
-    <div class="calendar-week">Sat</div>
-
-    {% for week in month_days %}
-        {% for day in week %}
-
-            {% if day == 0 %}
-                <div class="calendar-day empty"></div>
-            {% else %}
-                {% set day_str = "%04d-%02d-%02d"|format(year, month, day) %}
-                <a href="{{ url_for('home', selected_date=day_str) }}" class="calendar-link">
-                <div class="calendar-day {% if day_str in study_dates %}studied{% endif %} {% if day_str == today %}today{% endif %}">
-                    {{ day }}
-                </div>
-                </a>
-            {% endif %}
-
-        {% endfor %}
-    {% endfor %}
-
-</div>
-
-<hr>
-
-
-{% if selected_date %}
-    <h2 class="mt-4">{{ selected_date }} の学習ログ</h2>
-
-    {% if selected_logs %}
-        <ul>
-            {% for log in selected_logs %}
-                <li>
-                    {{ log.study_date }} / {{ log.content }} / {{ log.time }}分
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>この日の学習記録はありません。</p>
-    {% endif %}
-
-    <hr>
-{% endif %}
-
-
-    <h2 class="mt-4">ログ一覧</h2>
-
-    {% if logs %}
-
-    <ul>
-
-        {% for log in logs %}
-
-        <li>
-
-            {{ log.study_date }} / {{ log.content }} / {{ log.time }}分
-
-
-            <form action="{{ url_for('edit', log_id=log.id) }}" method="GET" style="display:inline;">
-            <button type="submit">編集</button>
-            </form>
-            <form method="POST" action="{{ url_for('delete',log_id=log.id )}}" style="display:inline;">
-                <button type="submit">削除</button>
-            </form>
-
-        </li>
-
-        {% endfor %}
-
-    </ul>
-
-    {% else %}
-
-    <p>まだ学習記録がありません。</p>
-
-    {% endif %}
-
+    <script>
+        function toggleInput(value) {
+            const input = document.getElementById("customInput");
+            if (value === "other") {
+                input.style.display = "flex";
+                input.style.flexDirection = "column";
+            } else {
+                input.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
