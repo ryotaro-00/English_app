@@ -2,23 +2,220 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新規登録</title>
-</head>
-<body>
-    <h1>新規登録</h1>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <form method="POST">
-        <label>ユーザー名:</label>
-        <input type="text" name="username" required>
-        <br>
+    <style>
+        * {
+        box-sizing: border-box;
+        }
 
-        <label>パスワード:</label>
-        <input type="password" name="password" required>
-        <br>
+        html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: "Segoe UI", "Yu Gothic UI", sans-serif;
+        background: #05070b;
+        color: #ffffff;
+        overflow: hidden;
+        }
 
-        <button type="submit">登録する</button>
-    </form>
+        body {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        }
 
-    <p><a href="{{ url_for('login') }}">ログイン画面へ</a></p>
+        .page-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+            radial-gradient(circle at 50% 60%, rgba(180,200,255,0.16), transparent 40%),
+            radial-gradient(circle at 50% 60%, rgba(255,255,255,0.06), transparent 40%),
+            radial-gradient(circle at 20% 25%, rgba(255,255,255,0.04), transparent 30%),
+            radial-gradient(circle at 80% 75%, rgba(255,255,255,0.03), transparent 35%),
+            linear-gradient(180deg, #020409 0%, #060b14 50%, #03060c 100%);
+        }
+
+        .glow {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(70px);
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.22;
+        }
+
+        .glow-left {
+        width: 280px;
+        height: 280px;
+        left: 14%;
+        top: 22%;
+        background: rgba(255, 255, 255, 0.16);
+        }
+
+        .glow-right {
+        width: 320px;
+        height: 320px;
+        right: 10%;
+        bottom: 18%;
+        background: rgba(255, 255, 255, 0.12);
+        }
+
+        .register-card {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 460px;
+        padding: 34px 30px;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.055);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.11);
+        box-shadow:
+            0 30px 80px rgba(0, 0, 0, 0.5),
+            inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+
+        .eyebrow {
+        font-size: 0.78rem;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.6);
+        margin-bottom: 14px;
+        }
+
+        h1 {
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        font-weight: 700;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+        margin: 0 0 12px;
+        color: rgba(255,255,255,0.96);
+        }
+
+        .subtext {
+        color: rgba(255,255,255,0.68);
+        font-size: 0.98rem;
+        line-height: 1.8;
+        margin-bottom: 28px;
+        }
+
+        .form-label {
+        color: rgba(255,255,255,0.7);
+        font-size: 0.92rem;
+        font-weight: 500;
+        margin-bottom: 8px;
+        }
+
+        .form-control {
+        height: 52px;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.055);
+        border: 1px solid rgba(255,255,255,0.12);
+        color: #ffffff;
+        padding: 12px 16px;
+        box-shadow: none;
+        transition: all 0.2s ease;
+        }
+
+        .form-control::placeholder {
+        color: rgba(255,255,255,0.35);
+        }
+
+        .form-control:focus {
+        background: rgba(255,255,255,0.08);
+        border-color: rgba(255,255,255,0.24);
+        color: #ffffff;
+        box-shadow: 0 0 0 0.18rem rgba(255,255,255,0.06);
+        }
+
+        .btn-main {
+        width: 100%;
+        height: 52px;
+        margin-top: 12px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 1rem;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+        backdrop-filter: blur(10px);
+        transition: all 0.2s ease;
+        }
+
+        .btn-main:hover {
+        background: rgba(255,255,255,0.16);
+        transform: translateY(-1px);
+        color: #fff;
+        }
+
+        .login-link {
+        margin-top: 22px;
+        text-align: center;
+        color: rgba(255,255,255,0.62);
+        font-size: 0.94rem;
+        }
+
+        .login-link a {
+        color: rgba(255,255,255,0.88);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(255,255,255,0.25);
+        transition: all 0.2s ease;
+        }
+
+        .login-link a:hover {
+        color: #fff;
+        border-bottom-color: rgba(255,255,255,0.7);
+        }
+
+        @media (max-width: 576px) {
+        body {
+            padding: 16px;
+        }
+
+        .register-card {
+            padding: 28px 20px;
+            border-radius: 24px;
+        }
+        }
+    </style>
+    </head>
+    <body>
+    <div class="page-bg"></div>
+
+    <div class="glow glow-left"></div>
+    <div class="glow glow-right"></div>
+
+    <div class="register-card">
+        <div class="eyebrow">English Study Log</div>
+        <h1>新規登録</h1>
+        <p class="subtext">
+        アカウントを作成して、あなたの学習記録を積み上げていきましょう。
+        </p>
+
+        <form method="POST">
+        <div class="mb-3">
+            <label for="username" class="form-label">ユーザー名</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="ユーザー名を入力" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">パスワード</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="パスワードを入力" required>
+        </div>
+
+        <button type="submit" class="btn btn-main">登録する</button>
+        </form>
+
+        <p class="login-link">
+        すでにアカウントを持っている方は
+        <a href="{{ url_for('login') }}">ログイン画面へ</a>
+        </p>
+    </div>
 </body>
 </html>
